@@ -1,0 +1,24 @@
+{
+  "name": "splash-party",
+  "version": "0.0.1",
+  "description": "power by numbers",
+  "main": "app.js",
+  "dependencies": {
+    "lodash": "^4.17.4",
+    "nightmare": "^2.10.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yeeezy/splash-party.git"
+  },
+  "author": "Yeeezy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yeeezy/splash-party/issues"
+  },
+  "homepage": "https://github.com/yeeezy/splash-party#readme"
+}
