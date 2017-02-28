@@ -53,3 +53,5 @@ Paste this into a browser console while it is on the Adidas website and you shou
 ##Todo
 
 * Kill Switch after 1 browser has passed queue
+* Add full browser toolbar to top of window
+* Auto-Extract sitekey, clientid, page source code, etc.
