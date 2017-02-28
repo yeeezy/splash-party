@@ -40,7 +40,8 @@ document.cookie='RES_TRACKINGID=';
 document.cookie='ResonanceSegment=';
 document.cookie='RES_SESSIONID=';
 document.cookie='_ga=';
-document.cookie='s_cc=true';```
+document.cookie='s_cc=true';
+```
 
 
 Paste this into a browser console while it is on the Adidas website and you should be OK
