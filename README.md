@@ -20,7 +20,7 @@ Configuration file can be modified as needed:
 * **userAgent**: You can set this to be your browsers user agent if you want to transfer sessions for /// use. The other option would be to set your browser to this user agent
 * **partySize**: Number of browsers to put on the splash page
 * **splashUniqueIdentifier**: This should be some unique selector that exists on splash but does not product page, many exist. If you want, you can reverse the .exists logic in the code and look for the sitekey to know your on the product page
-
+* **waitTime**: number of ms to wait between refreshing (after page has completely loaded)
 
 ###Disclaimer
 Use at your own risk, currently Adidas does not ban multiple sessions from the same IP, it may in the future.
@@ -45,6 +45,10 @@ document.cookie='s_cc=true';
 
 
 Paste this into a browser console while it is on the Adidas website and you should be OK
+
+##Debugging
+* For nightmarejs debugging ```DEBUG=nightmare node app.js```
+* For electronjs debugging ```DEBUG=electron* node app.js```
 
 ##Todo
 
