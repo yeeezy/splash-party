@@ -65,6 +65,8 @@ function postPageSource(src) {
     })
 }
 
+
+
 var browserArr = new Array(config.partySize);
 
 _.each(browserArr, function(browser, i) {
@@ -89,6 +91,14 @@ _.each(browserArr, function(browser, i) {
 
 });
 
+function killSwitch(nm) {
+    _.each(browserArr, function(browser) {
+       if (browser !== nm) {
+           browser.end();
+       }
+    });
+}
+
 function party(nm) {
     nm.exists(config.splashUniqueIdentifier)
         .then(function (isSplash) {
@@ -108,6 +118,9 @@ function party(nm) {
                         party(nm);
                     });
             } else {
+                if (config.singleSuccess) {
+                    killSwitch(nm);
+                }
                 return nm.html(`./page-source/${new Date().toString()}.html`, "HTMLComplete")
                     .then(function() {
                         return nm.cookies.get()

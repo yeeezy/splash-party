@@ -21,6 +21,8 @@ Configuration file can be modified as needed:
 * **partySize**: Number of browsers to put on the splash page
 * **splashUniqueIdentifier**: This should be some unique selector that exists on splash but does not product page, many exist. If you want, you can reverse the .exists logic in the code and look for the sitekey to know your on the product page
 * **waitTime**: number of ms to wait between refreshing (after page has completely loaded)
+* **enableSourceUpload**: enables the auto-upload of page source once you hit the product page, to be shared by the community
+* **singleSuccess**: set to true if you want all other browsers to stop once you hit the product page with 1
 
 ###Page Source
 After bypassing the Adidas waiting room/splash page, the app will automatically create a `page-source` directory, where it will save the product page's source code.
