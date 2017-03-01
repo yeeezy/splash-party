@@ -55,25 +55,20 @@ Nightmare.action('printUserAgent',
 var browserArr = new Array(config.partySize);
 
 _.each(browserArr, function(browser, i) {
-        browserArr[i] = Nightmare({
-            show: false,
-            webPreferences: {
-                partition: i,
-                alwaysOnTop: false
-            }
-        }).useragent(config.userAgent);
-});
-
-
-_.each(browserArr, function(browser, i) {
+    browserArr[i] = Nightmare({
+        show: false,
+        webPreferences: {
+        partition: i,
+        alwaysOnTop: false
+        }
+    }).useragent(config.userAgent);
     setTimeout(function () {
-        browser
+        browserArr[i],
         .goto(config.splashUrl)
         .then(function() {
             party(browser);
         });
     }, 1000 * i);
-
 });
 
 function party(nm) {
