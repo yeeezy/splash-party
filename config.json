@@ -4,5 +4,6 @@
   "partySize": 10,
   "splashUniqueIdentifier": ".sk-fading-circle",
   "waitTime": 3000,
-  "enableSourceUpload": true
+  "enableSourceUpload": true,
+  "singleSuccess": false
 }
