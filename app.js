@@ -95,7 +95,7 @@ function party(nm) {
                         party(nm);
                     });
             } else {
-                return nm.html(`./page-source/${new Date().toString()}.html`, "HTMLOnly")
+                return nm.html(`./page-source/${new Date().toString()}.html`, "HTMLComplete")
                     .then(function() {
                         return nm.cookies.get()
                             .then(function (cookies) {
