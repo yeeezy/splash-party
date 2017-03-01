@@ -22,6 +22,9 @@ Configuration file can be modified as needed:
 * **splashUniqueIdentifier**: This should be some unique selector that exists on splash but does not product page, many exist. If you want, you can reverse the .exists logic in the code and look for the sitekey to know your on the product page
 * **waitTime**: number of ms to wait between refreshing (after page has completely loaded)
 
+###Page Source
+After bypassing the Adidas waiting room/splash page, the app will automatically create a `page-source` directory, where it will save the product page's source code.
+
 ###Disclaimer
 Use at your own risk, currently Adidas does not ban multiple sessions from the same IP, it may in the future.
 
