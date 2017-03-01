@@ -27,6 +27,8 @@ Configuration file can be modified as needed:
 ###Page Source
 After bypassing the Adidas waiting room/splash page, the app will automatically create a `page-source` directory, where it will save the product page's source code.
 
+If you have auto-upload on, your source will be uploaded to https://glot.io/users/yeeezy/snippets
+
 ###Disclaimer
 Use at your own risk, currently Adidas does not ban multiple sessions from the same IP, it may in the future.
 
