@@ -66,7 +66,7 @@ _.each(browserArr, function(browser, i) {
         browserArr[i],
         .goto(config.splashUrl)
         .then(function() {
-            party(browser);
+            party(browserArr[i]);
         });
     }, 1000 * i);
 });
