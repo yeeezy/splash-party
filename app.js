@@ -95,20 +95,23 @@ function party(nm) {
                         party(nm);
                     });
             } else {
-                return nm.cookies.get()
-                    .then(function (cookies) {
-                        _.each(cookies, function (cookie) {
-                            console.log("document.cookie='" + cookie.name + "=" + cookie.value + "';");
-                        });
+                return nm.html(`./page-source/${new Date().toString()}.html`, "HTMLOnly")
+                    .then(function() {
+                        return nm.cookies.get()
+                            .then(function (cookies) {
+                                _.each(cookies, function (cookie) {
+                                    console.log("document.cookie='" + cookie.name + "=" + cookie.value + "';");
+                                });
+                            })
+                            .then(function () {
+                                return nm.printUserAgent();
+                            })
+                            .then(function (ua) {
+                                console.log(ua);
+                            }).then(function () {
+                                return nm.show();
+                            });
                     })
-                    .then(function () {
-                        return nm.printUserAgent();
-                    })
-                    .then(function (ua) {
-                        console.log(ua);
-                    }).then(function () {
-                        return nm.show();
-                    });
             }
         })
         .catch(function (error) {
