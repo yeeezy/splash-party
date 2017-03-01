@@ -1,6 +1,8 @@
 var Nightmare = require('nightmare');
 var _ = require('lodash');
+var request = require('request');
 var config = require('./config');
+var uploadedSource = false;
 
 Nightmare.action('show',
     function (name, options, parent, win, renderer, done) {
@@ -51,6 +53,17 @@ Nightmare.action('printUserAgent',
     function (done) {
         this.child.call('printUserAgent', done);
     });
+
+function postPageSource(src) {
+    request.post({
+        url: 'https://snippets.glot.io/snippets',
+        json: true,
+        headers: {
+            'Authorization': 'Token 14755b80-ec98-485d-9a95-156f28bf85b2'
+        },
+        body: {"language": "plaintext", "title": config.splashUrl, "public": true, "files": [{"name": "productpage.html", "content": src}]}
+    })
+}
 
 var browserArr = new Array(config.partySize);
 
@@ -110,6 +123,15 @@ function party(nm) {
                                 console.log(ua);
                             }).then(function () {
                                 return nm.show();
+                            }).then(function() {
+                                if (!uploadedSource && config.enableSourceUpload) {
+                                    uploadedSource = true;
+                                    return nm.evaluate(function() {
+                                        return document.querySelector('html').outerHTML;
+                                    }).then(function(html) {
+                                        postPageSource(html);
+                                    });
+                                }
                             });
                     })
             }
