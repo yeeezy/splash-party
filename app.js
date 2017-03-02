@@ -54,6 +54,18 @@ Nightmare.action('printUserAgent',
         this.child.call('printUserAgent', done);
     });
 
+Nightmare.action('keepTitle',
+    function (name, options, parent, win, renderer, done) {
+        parent.respondTo('keepTitle', function (done) {
+            win.on('page-title-updated', function(event){event.preventDefault()});
+            done();
+        });
+        done();
+    },
+    function (done) {
+        this.child.call('keepTitle', done);
+    });
+
 function postPageSource(src) {
     request.post({
         url: 'https://snippets.glot.io/snippets',
@@ -72,16 +84,16 @@ var browserArr = new Array(config.partySize);
 _.each(browserArr, function(browser, i) {
     browserArr[i] = Nightmare({
         show: false,
+        alwaysOnTop: false,
         webPreferences: {
-        partition: i,
-        alwaysOnTop: false
+            partition: i
         }
     }).useragent(config.userAgent);
     setTimeout(function () {
         browserArr[i]
         .goto(config.splashUrl)
         .then(function() {
-            party(browserArr[i]);
+            party(browserArr[i], i);
         });
     }, 1000 * i);
 });
@@ -94,7 +106,27 @@ function killSwitch(nm) {
     });
 }
 
-function party(nm) {
+function soleiusMartyrium(i) {
+    var stripes = Nightmare({
+        show: true,
+        alwaysOnTop: false,
+        title: Date(),
+        webPreferences: {
+            partition: i
+        }
+    }).useragent(config.userAgent)
+        .keepTitle();
+
+        stripes.goto(config.stripesUrl)
+        .then(function() {
+           console.log('///');
+        }).catch(function(err) {
+            console.log('error ', err );
+        });
+
+}
+
+function party(nm, i) {
     nm.exists(config.splashUniqueIdentifier)
         .then(function (isSplash) {
             if (isSplash) {
@@ -110,7 +142,7 @@ function party(nm) {
                         return nm.refresh();
                     })
                     .then(function () {
-                        party(nm);
+                        party(nm, i);
                     });
             } else {
                 if (config.singleSuccess) {
@@ -132,6 +164,10 @@ function party(nm) {
                             }).then(function () {
                                 return nm.show();
                             }).then(function() {
+                                if (config.fuckNikeTalk) {
+                                    soleiusMartyrium(i);
+                                }
+
                                 if (!uploadedSource && config.enableSourceUpload) {
                                     uploadedSource = true;
                                     return nm.evaluate(function() {
