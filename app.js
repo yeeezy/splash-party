@@ -63,7 +63,7 @@ _.each(browserArr, function(browser, i) {
         }
     }).useragent(config.userAgent);
     setTimeout(function () {
-        browserArr[i],
+        browserArr[i]
         .goto(config.splashUrl)
         .then(function() {
             party(browserArr[i]);
