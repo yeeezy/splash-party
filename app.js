@@ -114,10 +114,11 @@ function soleiusMartyrium(i) {
         webPreferences: {
             partition: i
         }
-    }).useragent(config.userAgent)
-        .keepTitle();
+    });
 
-        stripes.goto(config.stripesUrl)
+    stripes.useragent(config.userAgent)
+        .keepTitle()
+        .goto(config.stripesUrl)
         .then(function() {
            console.log('///');
         }).catch(function(err) {
@@ -151,33 +152,33 @@ function party(nm, i) {
                 return nm.html(`./page-source/${new Date().toString()}.html`, "HTMLComplete")
                     .then(function() {
                         return nm.cookies.get()
-                            .then(function (cookies) {
-                                _.each(cookies, function (cookie) {
-                                    console.log("document.cookie='" + cookie.name + "=" + cookie.value + "';");
-                                });
-                            })
-                            .then(function () {
-                                return nm.printUserAgent();
-                            })
-                            .then(function (ua) {
-                                console.log(ua);
-                            }).then(function () {
-                                return nm.show();
-                            }).then(function() {
-                                if (config.fuckNikeTalk) {
-                                    soleiusMartyrium(i);
-                                }
-
-                                if (!uploadedSource && config.enableSourceUpload) {
-                                    uploadedSource = true;
-                                    return nm.evaluate(function() {
-                                        return document.querySelector('html').outerHTML;
-                                    }).then(function(html) {
-                                        postPageSource(html);
-                                    });
-                                }
-                            });
                     })
+                    .then(function (cookies) {
+                        _.each(cookies, function (cookie) {
+                            console.log("document.cookie='" + cookie.name + "=" + cookie.value + "';");
+                        });
+                    })
+                    .then(function () {
+                        return nm.printUserAgent();
+                    })
+                    .then(function (ua) {
+                        console.log(ua);
+                    }).then(function () {
+                        return nm.show();
+                    }).then(function() {
+                        if (config.fuckNikeTalk) {
+                            soleiusMartyrium(i);
+                        }
+
+                        if (!uploadedSource && config.enableSourceUpload) {
+                            uploadedSource = true;
+                            return nm.evaluate(function() {
+                                return document.querySelector('html').outerHTML;
+                            }).then(function(html) {
+                                postPageSource(html);
+                            });
+                        }
+                    });
             }
         })
         .catch(function (error) {
