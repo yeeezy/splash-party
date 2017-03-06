@@ -1,6 +1,12 @@
 # splash-party
 Run multiple headless browsers on Adidas.com waiting room
 
+###Support
+There is a subreddit for supporting this repo and other Adidas-related repos 
+
+https://www.reddit.com/r/adidasatc
+
+
 ###How it works
 Headless browsers will refresh the splash page while creating fresh sessions, once a browser bypasses the waiting room, the browser will then become visible.
 
@@ -25,6 +31,8 @@ Configuration file can be modified as needed:
 * **singleSuccess**: set to true if you want all other browsers to stop once you hit the product page with 1
 * **fuckNikeTalk**: when a browser passes through to the product page, a new window with /// will open with the same session
 * **stripesUrl**: if you set fuckNikeTalk to true, set this to your local /// url
+* **hmacOnly**: "hmac mode" - a browser passing splash won't pop the window open, it will only print out the cookies, sitekey, and save the source code. Use this if you're only interested in getting hmac cookie and transfering them to your own browser
+* **gCookies**: an array of cookies, **do not leave empty, it will cause program to crash**. See [this repo](https://github.com/yeeezy/captcha-cookies) for explanation on how to build the array. Used properly this will let you through captcha without solving 10 times
 
 ###Page Source
 After bypassing the Adidas waiting room/splash page, the app will automatically create a `page-source` directory, where it will save the product page's source code.
@@ -43,29 +51,18 @@ set **fuckNikeTalk** to true and set **stripesUrl** to be your local /// url
 * **The title of the browser is the time it opened** - this is important to keep track of your 10 minute cookie
 * if multiple windows open -> multiple /// instances will also open, each under a different session, to make things managable just notice the time in the title to understand how long you have for each window
 
+
+###G-Cookies
+There is now an option to transfer over your g-cookies to pass captcha easily, see config for explanation
+
 ###Disclaimer
 Use at your own risk, currently Adidas does not ban multiple sessions from the same IP, it may in the future.
 
 ###Session Transfer
-There is a built in mechanism to help session transfer - **it has not been tested**
+There is a built in mechanism to help session transfer, all cookies are printed, then any cookies that seem like hmac cookies are printed
+After that the user agent is printed, and then the sitekey
 
-Once one browser bypasses queue, it will become visible and the console will print out javascript code to transfer all cookies, the final printout will be the user agent
-
-For example
-
-```document.cookie='us_criteo_sociomantic_split=';
-document.cookie='inf_media_split=';
-document.cookie='__adi_rt_DkpyPh8=';
-document.cookie='AMCVS_7ADA401053CCF9130A490D4C%=';
-document.cookie='RES_TRACKINGID=';
-document.cookie='ResonanceSegment=';
-document.cookie='RES_SESSIONID=';
-document.cookie='_ga=';
-document.cookie='s_cc=true';
-```
-
-
-Paste this into a browser console while it is on the Adidas website and you should be OK
+Transfer any relevant cookies via your favorite browser extension, I do not recommend any specific one. This has been tested to work during a release
 
 ##Debugging
 * For nightmarejs debugging ```DEBUG=nightmare node app.js```
@@ -73,6 +70,5 @@ Paste this into a browser console while it is on the Adidas website and you shou
 
 ##Todo
 
-* Kill Switch after 1 browser has passed queue
 * Add full browser toolbar to top of window
-* Auto-Extract sitekey, clientid, page source code, etc.
+* Auto-Extract clientid, captcha-dup
