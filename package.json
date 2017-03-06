@@ -4,6 +4,7 @@
   "description": "power by numbers",
   "main": "app.js",
   "dependencies": {
+    "chalk": "^1.1.3",
     "lodash": "^4.17.4",
     "nightmare": "^2.10.0",
     "request": "^2.79.0"

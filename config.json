@@ -2,10 +2,18 @@
   "splashUrl": "http://adidas.bot.nu/yeezy",
   "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36",
   "partySize": 10,
-  "splashUniqueIdentifier": ".sk-fading-circle",
+  "splashUniqueIdentifier": "[data-sitekey]",
   "waitTime": 3000,
   "enableSourceUpload": true,
   "singleSuccess": false,
   "fuckNikeTalk": false,
-  "stripesUrl": "http://dev.adidas.com:8000/d3stryr-3stripes.php"
+  "stripesUrl": "http://dev.adidas.com:8000/d3stryr-3stripes.php",
+  "hmacOnly": false,
+  "gCookies": [
+    {
+      "url": "https://www.google.com",
+      "name": "abc",
+      "value": "123"
+    }
+  ]
 }

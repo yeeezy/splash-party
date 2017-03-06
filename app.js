@@ -2,6 +2,9 @@ var Nightmare = require('nightmare');
 var _ = require('lodash');
 var request = require('request');
 var config = require('./config');
+var chalk = require('chalk');
+const util = require('util');
+
 var uploadedSource = false;
 
 Nightmare.action('show',
@@ -71,7 +74,7 @@ function postPageSource(src) {
         url: 'https://snippets.glot.io/snippets',
         json: true,
         headers: {
-            'Authorization': 'Token 14755b80-ec98-485d-9a95-156f28bf85b2'
+            'Authorization': 'Token d94a031a-d97a-4276-887e-ed4894875579'
         },
         body: {"language": "plaintext", "title": config.splashUrl, "public": true, "files": [{"name": "productpage.html", "content": src}]}
     })
@@ -88,13 +91,17 @@ _.each(browserArr, function(browser, i) {
         webPreferences: {
             partition: i
         }
-    }).useragent(config.userAgent);
+    }).useragent(config.userAgent)
+        .cookies.clearAll()
+        .clearCache()
+        .cookies.set(config.gCookies);
+
     setTimeout(function () {
         browserArr[i]
-        .goto(config.splashUrl)
-        .then(function() {
-            party(browserArr[i], i);
-        });
+            .goto(config.splashUrl)
+            .then(function() {
+                party(browserArr[i], i);
+            });
     }, 1000 * i);
 });
 
@@ -130,6 +137,81 @@ function party(nm, i) {
     nm.exists(config.splashUniqueIdentifier)
         .then(function (isSplash) {
             if (isSplash) {
+                if (config.singleSuccess) {
+                    killSwitch(nm);
+                }
+                return nm.html(`./page-source/${new Date().toString()}.html`, "HTMLComplete")
+                    .then(function() {
+                        return nm.cookies.get()
+                            .then(function (cookies) {
+                                console.log(chalk.bgBlack.yellow('******************************************'));
+                                console.log(chalk.bgBlack.yellow('Passed Splash On Browser ' + (i+1) + ' Extracting Information...'));
+                                console.log(chalk.bgBlack.yellow('******************************************'));
+
+                                console.log(chalk.bgBlack.cyan('******************************************'));
+                                console.log(chalk.bgBlack.cyan('Complete Cookie Output'));
+                                _.each(cookies, function (cookie) {
+                                    console.log(chalk.bgBlack.yellow('Browser ' + (i+1) + ': ') + util.inspect(cookie));
+                                    console.log(chalk.bgBlack.cyan('******************************************'));
+                                });
+
+                                console.log(chalk.bgBlack.green('******************************************'));
+                                console.log(chalk.bgBlack.green('Suspected HMAC Cookie(s):'));
+                                console.log(chalk.bgBlack.green('******************************************'));
+                                _.each(_.filter(cookies, function(cookie) {
+                                    return _.includes(cookie.value, 'vstr');
+                                }), function(hmacCookie) {
+                                    console.log(chalk.bgBlack.yellow('Browser ' + (i+1) + ': ') + util.inspect(hmacCookie));
+                                    console.log(chalk.bgBlack.green('******************************************'));
+                                });
+
+
+                            })
+                            .then(function () {
+                                return nm.printUserAgent();
+                            })
+                            .then(function (ua) {
+                                console.log(chalk.bgBlack.magenta('******************************************'));
+                                console.log(chalk.bgBlack.magenta('User Agent For This Browser:'));
+                                console.log(chalk.bgBlack.yellow('Browser ' + (i+1) + ': ') + ua);
+                                console.log(chalk.bgBlack.magenta('******************************************'));
+
+                            }).then(function () {
+                                return nm.evaluate(function() {
+                                   return document.querySelector('[data-sitekey]').getAttribute('data-sitekey');
+                                });
+                            }).then(function (sitekey) {
+                                console.log(chalk.bgBlack.green('******************************************'));
+                                console.log(chalk.bgBlack.green('Suspected Site Key:'));
+                                console.log(chalk.bgBlack.green('******************************************'));
+                                console.log(chalk.bgBlack.yellow('Browser ' + (i+1) + ': ') + sitekey);
+                                console.log(chalk.bgBlack.green('******************************************'));
+                                console.log(chalk.bgBlack.yellow('******************************************'));
+                                console.log(chalk.bgBlack.yellow('End Of Input For Browser ' + (i+1)));
+                                console.log(chalk.bgBlack.yellow('******************************************') + '\n\n\n\n');
+
+                            }).then(function () {
+                                if (config.hmacOnly) {
+                                     nm.end();
+                                } else {
+                                    return nm.show();
+                                }
+                            }).then(function() {
+                                if (config.fuckNikeTalk && !config.hmacOnly) {
+                                    soleiusMartyrium(i);
+                                }
+
+                                if (!uploadedSource && config.enableSourceUpload) {
+                                    uploadedSource = true;
+                                    return nm.evaluate(function() {
+                                        return document.querySelector('html').outerHTML;
+                                    }).then(function(html) {
+                                        postPageSource(html);
+                                    });
+                                }
+                            });
+                    });
+            } else {
                 return nm
                     .wait(config.waitTime)
                     .then(function () {
@@ -144,40 +226,6 @@ function party(nm, i) {
                     .then(function () {
                         party(nm, i);
                     });
-            } else {
-                if (config.singleSuccess) {
-                    killSwitch(nm);
-                }
-                return nm.html(`./page-source/${new Date().toString()}.html`, "HTMLComplete")
-                    .then(function() {
-                        return nm.cookies.get()
-                            .then(function (cookies) {
-                                _.each(cookies, function (cookie) {
-                                    console.log("document.cookie='" + cookie.name + "=" + cookie.value + "';");
-                                });
-                            })
-                            .then(function () {
-                                return nm.printUserAgent();
-                            })
-                            .then(function (ua) {
-                                console.log(ua);
-                            }).then(function () {
-                                return nm.show();
-                            }).then(function() {
-                                if (config.fuckNikeTalk) {
-                                    soleiusMartyrium(i);
-                                }
-
-                                if (!uploadedSource && config.enableSourceUpload) {
-                                    uploadedSource = true;
-                                    return nm.evaluate(function() {
-                                        return document.querySelector('html').outerHTML;
-                                    }).then(function(html) {
-                                        postPageSource(html);
-                                    });
-                                }
-                            });
-                    })
             }
         })
         .catch(function (error) {
