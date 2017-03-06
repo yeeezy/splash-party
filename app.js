@@ -159,7 +159,7 @@ function party(nm, i) {
                                 console.log(chalk.bgBlack.green('Suspected HMAC Cookie(s):'));
                                 console.log(chalk.bgBlack.green('******************************************'));
                                 _.each(_.filter(cookies, function(cookie) {
-                                    return _.includes(cookie.value, 'vstr');
+                                    return _.includes(cookie.value, 'hmac');
                                 }), function(hmacCookie) {
                                     console.log(chalk.bgBlack.yellow('Browser ' + (i+1) + ': ') + util.inspect(hmacCookie));
                                     console.log(chalk.bgBlack.green('******************************************'));
