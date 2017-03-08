@@ -62,10 +62,9 @@ There is now an option to transfer over your g-cookies to pass captcha easily, s
 Use at your own risk, currently Adidas does not ban multiple sessions from the same IP, it may in the future.
 
 ###Session Transfer
-There is a built in mechanism to help session transfer, all cookies are printed, then any cookies that seem like hmac cookies are printed
-After that the user agent is printed, and then the sitekey
+There is a built in mechanism to help session transfer, all cookies are printed in proper JSON format, then any cookies that seem like hmac cookies are printed (also in proper JSON format)
 
-Transfer any relevant cookies via your favorite browser extension, I do not recommend any specific one. This has been tested to work during a release
+Transfer any relevant cookies via your favorite browser extension, I recommend EditThisCookie which takes the complete JSON array as input and sets all cookies in 1 easy move
 
 ##Debugging
 * For nightmarejs debugging ```DEBUG=nightmare node app.js```
