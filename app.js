@@ -146,43 +146,50 @@ function party(nm, i) {
                             .then(function (cookies) {
                                 console.log(chalk.bgBlack.yellow('******************************************'));
                                 console.log(chalk.bgBlack.yellow('Passed Splash On Browser ' + (i+1) + ' Extracting Information...'));
+                                console.log(chalk.bgBlack.yellow('Passed Time ' + (i+1) + ' ' + Date()));
                                 console.log(chalk.bgBlack.yellow('******************************************'));
 
                                 console.log(chalk.bgBlack.cyan('******************************************'));
                                 console.log(chalk.bgBlack.cyan('Complete Cookie Output'));
-                                _.each(cookies, function (cookie) {
-                                    console.log(chalk.bgBlack.yellow('Browser ' + (i+1) + ': ') + util.inspect(cookie));
-                                    console.log(chalk.bgBlack.cyan('******************************************'));
-                                });
+                                console.log(chalk.bgBlack.cyan('******************************************'));
+                                console.log(JSON.stringify(cookies));
+
 
                                 console.log(chalk.bgBlack.green('******************************************'));
                                 console.log(chalk.bgBlack.green('Suspected HMAC Cookie(s):'));
                                 console.log(chalk.bgBlack.green('******************************************'));
-                                _.each(_.filter(cookies, function(cookie) {
+                                console.log(JSON.stringify(_.filter(cookies, function(cookie) {
                                     return _.includes(cookie.value, 'hmac');
-                                }), function(hmacCookie) {
-                                    console.log(chalk.bgBlack.yellow('Browser ' + (i+1) + ': ') + util.inspect(hmacCookie));
-                                    console.log(chalk.bgBlack.green('******************************************'));
+                                })));
+                                console.log(chalk.bgBlack.green('******************************************'));
+                            }).then(function () {
+                                return nm.evaluate(function() {
+                                    var action =  document.querySelector('#flashproductform').getAttribute('action');
+                                    return action.substr(action.indexOf('clientId=')+9,action.length);
                                 });
-
-
-                            })
-                            .then(function () {
-                                return nm.printUserAgent();
-                            })
-                            .then(function (ua) {
-                                console.log(chalk.bgBlack.magenta('******************************************'));
-                                console.log(chalk.bgBlack.magenta('User Agent For This Browser:'));
-                                console.log(chalk.bgBlack.yellow('Browser ' + (i+1) + ': ') + ua);
-                                console.log(chalk.bgBlack.magenta('******************************************'));
-
+                            }).then(function (clientid) {
+                                console.log(chalk.bgBlack.green('******************************************'));
+                                console.log(chalk.bgBlack.green('Client ID:'));
+                                console.log(chalk.bgBlack.green('******************************************'));
+                                console.log(chalk.bgBlack.yellow('Browser ' + (i+1) + ': ') + clientid);
+                                console.log(chalk.bgBlack.green('******************************************'));
+                            }).then(function () {
+                                return nm.evaluate(function() {
+                                    return window.captchaResponse.toString();
+                                });
+                            }).then(function (dupFunction) {
+                                console.log(chalk.bgBlack.green('******************************************'));
+                                console.log(chalk.bgBlack.green('Captcha-Dup:'));
+                                console.log(chalk.bgBlack.green('******************************************'));
+                                console.log(chalk.bgBlack.yellow('Browser ' + (i + 1) + ': ') + dupFunction.substr(dupFunction.indexOf("$('#flashproductform').append"), dupFunction.length));
+                                console.log(chalk.bgBlack.green('******************************************'));
                             }).then(function () {
                                 return nm.evaluate(function() {
                                    return document.querySelector('[data-sitekey]').getAttribute('data-sitekey');
                                 });
                             }).then(function (sitekey) {
                                 console.log(chalk.bgBlack.green('******************************************'));
-                                console.log(chalk.bgBlack.green('Suspected Site Key:'));
+                                console.log(chalk.bgBlack.green('Site Key:'));
                                 console.log(chalk.bgBlack.green('******************************************'));
                                 console.log(chalk.bgBlack.yellow('Browser ' + (i+1) + ': ') + sitekey);
                                 console.log(chalk.bgBlack.green('******************************************'));
