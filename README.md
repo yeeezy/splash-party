@@ -39,6 +39,9 @@ After bypassing the Adidas waiting room/splash page, the app will automatically 
 
 If you have auto-upload on, your source will be uploaded to https://glot.io/users/yeeezy/snippets
 
+###Variable Print Out
+When a browser reaches the product page, it will attempt to extract and print the sitekey, client-id and captcha-dup. 
+
 ### /// Integration
 
 **this feature has never been tested live**
@@ -71,4 +74,4 @@ Transfer any relevant cookies via your favorite browser extension, I do not reco
 ##Todo
 
 * Add full browser toolbar to top of window
-* Auto-Extract clientid, captcha-dup
+
