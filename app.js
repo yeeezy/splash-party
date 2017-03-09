@@ -164,8 +164,13 @@ function party(nm, i) {
                                 console.log(chalk.bgBlack.green('******************************************'));
                             }).then(function () {
                                 return nm.evaluate(function() {
-                                    var action =  document.querySelector('#flashproductform').getAttribute('action');
-                                    return action.substr(action.indexOf('clientId=')+9,action.length);
+                                    var action =  document.querySelector('#flashproductform');
+                                    if (action) {
+                                        action = action.getAttribute('action');
+                                        return action.substr(action.indexOf('clientId=')+9,action.length);
+                                    } else {
+                                        return ''
+                                    }
                                 });
                             }).then(function (clientid) {
                                 console.log(chalk.bgBlack.green('******************************************'));
@@ -175,7 +180,11 @@ function party(nm, i) {
                                 console.log(chalk.bgBlack.green('******************************************'));
                             }).then(function () {
                                 return nm.evaluate(function() {
-                                    return window.captchaResponse.toString();
+                                    if (window.captchaResponse) {
+                                        return window.captchaResponse.toString();
+                                    } else {
+                                        return '';
+                                    }
                                 });
                             }).then(function (dupFunction) {
                                 console.log(chalk.bgBlack.green('******************************************'));
@@ -185,7 +194,12 @@ function party(nm, i) {
                                 console.log(chalk.bgBlack.green('******************************************'));
                             }).then(function () {
                                 return nm.evaluate(function() {
-                                   return document.querySelector('[data-sitekey]').getAttribute('data-sitekey');
+                                    var sitekey = document.querySelector('[data-sitekey]');
+                                    if (sitekey) {
+                                        return sitekey.getAttribute('data-sitekey');
+                                    } else {
+                                        return '';
+                                    }
                                 });
                             }).then(function (sitekey) {
                                 console.log(chalk.bgBlack.green('******************************************'));
