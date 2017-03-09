@@ -101,6 +101,8 @@ _.each(browserArr, function(browser, i) {
             .goto(config.splashUrl)
             .then(function() {
                 party(browserArr[i], i);
+            }).catch(function (error) {
+                console.error('an error has occurred: ' + error);
             });
     }, 1000 * i);
 });
@@ -228,9 +230,15 @@ function party(nm, i) {
                                         return document.querySelector('html').outerHTML;
                                     }).then(function(html) {
                                         postPageSource(html);
+                                    }).catch(function (error) {
+                                        console.error('an error has occurred: ' + error);
                                     });
                                 }
+                            }).catch(function (error) {
+                                console.error('an error has occurred: ' + error);
                             });
+                    }).catch(function (error) {
+                        console.error('an error has occurred: ' + error);
                     });
             } else {
                 return nm
@@ -246,10 +254,11 @@ function party(nm, i) {
                     })
                     .then(function () {
                         party(nm, i);
+                    }).catch(function (error) {
+                        console.error('an error has occurred: ' + error);
                     });
             }
-        })
-        .catch(function (error) {
+        }).catch(function (error) {
             console.error('an error has occurred: ' + error);
         });
 }
