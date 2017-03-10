@@ -127,6 +127,7 @@ function soleiusMartyrium(i) {
         .keepTitle();
 
         stripes.goto(config.stripesUrl)
+        .refresh()
         .then(function() {
            console.log('///');
         }).catch(function(err) {
