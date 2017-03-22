@@ -7,7 +7,7 @@ There is a subreddit for supporting this repo and other Adidas-related repos
 https://www.reddit.com/r/adidasatc
 
 
-###How it works
+### How it works
 Headless browsers will refresh the splash page while creating fresh sessions, once a browser bypasses the waiting room, the browser will then become visible.
 
 **Note:** Currently a browser becoming visible will have focus set to it, so be mindful while you're checking out, another window might pop up - which has a different session that also bypassed queue
@@ -19,7 +19,7 @@ Headless browsers will refresh the splash page while creating fresh sessions, on
 * npm install
 * node app.js
 
-###Configure
+### Configure
 Configuration file can be modified as needed:
 
 * **splashUrl**: Url for the Adidas splash page (or "waiting room")
@@ -34,7 +34,7 @@ Configuration file can be modified as needed:
 * **hmacOnly**: "hmac mode" - a browser passing splash won't pop the window open, it will only print out the cookies, sitekey, and save the source code. Use this if you're only interested in getting hmac cookie and transfering them to your own browser
 * **gCookies**: an array of cookies, **do not leave empty, it will cause program to crash**. See [this repo](https://github.com/yeeezy/captcha-cookies) for explanation on how to build the array. Used properly this will let you through captcha without solving 10 times
 
-###Page Source
+### Page Source
 After bypassing the Adidas waiting room/splash page, the app will automatically create a `page-source` directory, where it will save the product page's source code.
 
 If you have auto-upload on, your source will be uploaded to https://glot.io/users/yeeezy/snippets
@@ -55,10 +55,10 @@ set **fuckNikeTalk** to true and set **stripesUrl** to be your local /// url
 * if multiple windows open -> multiple /// instances will also open, each under a different session, to make things managable just notice the time in the title to understand how long you have for each window
 
 
-###G-Cookies
+### G-Cookies
 There is now an option to transfer over your g-cookies to pass captcha easily, see config for explanation
 
-###Disclaimer
+### Disclaimer
 Use at your own risk, currently Adidas does not ban multiple sessions from the same IP, it may in the future.
 
 ###Session Transfer
@@ -66,11 +66,11 @@ There is a built in mechanism to help session transfer, all cookies are printed 
 
 Transfer any relevant cookies via your favorite browser extension, I recommend EditThisCookie which takes the complete JSON array as input and sets all cookies in 1 easy move
 
-##Debugging
+## Debugging
 * For nightmarejs debugging ```DEBUG=nightmare node app.js```
 * For electronjs debugging ```DEBUG=electron* node app.js```
 
-##Todo
+## Todo
 
 * Add full browser toolbar to top of window
 
