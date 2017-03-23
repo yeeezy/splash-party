@@ -1,7 +1,7 @@
 # splash-party
 Run multiple headless browsers on Adidas.com waiting room
 
-###Support
+### Support
 There is a subreddit for supporting this repo and other Adidas-related repos 
 
 https://www.reddit.com/r/adidasatc
@@ -12,7 +12,7 @@ Headless browsers will refresh the splash page while creating fresh sessions, on
 
 **Note:** Currently a browser becoming visible will have focus set to it, so be mindful while you're checking out, another window might pop up - which has a different session that also bypassed queue
 
-###Setup
+### Setup
 
 * install nodejs and npm
 * clone repo
@@ -61,7 +61,7 @@ There is now an option to transfer over your g-cookies to pass captcha easily, s
 ### Disclaimer
 Use at your own risk, currently Adidas does not ban multiple sessions from the same IP, it may in the future.
 
-###Session Transfer
+### Session Transfer
 There is a built in mechanism to help session transfer, all cookies are printed in proper JSON format, then any cookies that seem like hmac cookies are printed (also in proper JSON format)
 
 Transfer any relevant cookies via your favorite browser extension, I recommend EditThisCookie which takes the complete JSON array as input and sets all cookies in 1 easy move
