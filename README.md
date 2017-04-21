@@ -1,4 +1,4 @@
-# splash-party
+# splash-party 
 Run multiple headless browsers on Adidas.com waiting room
 
 ### Support
@@ -12,11 +12,12 @@ Headless browsers will refresh the splash page while creating fresh sessions, on
 **Note:** Currently a browser becoming visible will have focus set to it, so be mindful while you're checking out, another window might pop up - which has a different session that also bypassed queue
 
 ### Setup
-
-* install nodejs and npm
-* clone repo
-* npm install
-* node app.js
+```sh
+$ git clone https://github.com/yeeezy/splash-party
+$ cd splash-party
+$ npm install
+$ node app 
+```
 
 ### Configure
 Configuration file can be modified as needed:
