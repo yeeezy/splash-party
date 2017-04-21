@@ -6,6 +6,7 @@ const ip = require('ip');
 const Nightmare = require('nightmare');
 const request = require('request');
 const util = require('util');
+const webdriver = require('selenium-webdriver');
 
 let uploadedSource = false;
 let pastSplash = false;
@@ -122,7 +123,7 @@ if (!config.useProxies || proxies.length == 0){
 
 _.each(browserArr, function(browser, i) {
 	let opts = {
-		show: true,
+		show: false,
 		alwaysOnTop: false,
 		title: ip.address() ,
 		webPreferences: {
@@ -178,8 +179,7 @@ _.each(browserArr, function(browser, i) {
 			.type('#Passwd', config.gmailPass)
 			.click('#signIn')
 			.wait(10000)
-			.goto('https://www.hurl.it') // site with recaptcha
-			.then(()=>{
+			.then(() => {
 				setTimeout(() => {
 					browserArr[i]
 						.goto(config.splashUrl)
@@ -208,8 +208,6 @@ _.each(browserArr, function(browser, i) {
 				});
 		}, 1000 * i);
 	}
-
-
 });
 
 function killSwitch(nm) {
@@ -221,14 +219,52 @@ function killSwitch(nm) {
 }
 
 function soleiusMartyrium(stripes) {
+
+	let driver = new webdriver.Builder()
+	.forBrowser('chrome')
+	.build();
+
 	stripes
-		.goto(config.stripesUrl)
-		.then(() => {
-			console.log('///');
+		.cookies.get({ url: null })
+		.end()
+		.then((cookies) => {
+			transferCookies(cookies);
 		})
 		.catch((err) => {
 			console.log(error(err.toString()));
 		});
+
+	function transferCookies(cookies){
+		// transfer cookies to chrome
+		driver.get('http://www.google.com');
+		for (c in cookies){
+			if (cookies[c].domain.includes('google')){
+				driver.manage().addCookie({
+					'name': cookies[c].name,
+					'value': cookies[c].value,
+					'expiry': cookies[c].expirationDate
+				});
+
+				delete cookies[c];
+			}
+		}
+
+		driver.get(config.splashUrl);
+		for (c in cookies){
+			if (cookies[c].domain.includes('adidas')){
+				driver.manage().addCookie({
+					'name': cookies[c].name,
+					'value': cookies[c].value,
+					'expiry': cookies[c].expirationDate
+				});
+
+				delete cookies[c];
+			}
+		}
+
+		driver.get(config.stripesUrl)
+		console.log('///');
+	}
 }
 
 function party(nm, i) {

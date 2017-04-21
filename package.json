@@ -8,7 +8,8 @@
     "ip": "^1.1.5",
     "lodash": "^4.17.4",
     "nightmare": "^2.10.0",
-    "request": "^2.79.0"
+    "request": "^2.79.0",
+    "selenium-webdriver": "^3.3.0"
   },
   "devDependencies": {},
   "scripts": {

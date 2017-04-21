@@ -6,7 +6,6 @@ There is a subreddit for supporting this repo and other Adidas-related repos
 
 https://www.reddit.com/r/adidasatc
 
-
 ### How it works
 Headless browsers will refresh the splash page while creating fresh sessions, once a browser bypasses the waiting room, the browser will then become visible.
 
@@ -38,7 +37,7 @@ Configuration file can be modified as needed:
 * **refresh**: if true, will constantly refresh page after specified waitTime
 * **clearCookiesOnRefresh**: if true, will clear cookies after each refresh
 * **useProxies**: if true, will instantiate a browser for each proxy and local ip; will ignore partySize
-* **proxies**: array of proxies; can be in `address:port` format or `adress:port:user:pass`; any other format will not work
+* **proxies**: array of proxies; can be in the format of `address:port` or `adress:port:user:pass`; any other format will not work
 
 ### Page Source
 After bypassing the Adidas waiting room/splash page, the app will automatically create a `page-source` directory, where it will save the product page's source code.
@@ -71,7 +70,3 @@ Transfer any relevant cookies via your favorite browser extension, I recommend E
 ## Debugging
 * For nightmarejs debugging ```DEBUG=nightmare node app.js```
 * For electronjs debugging ```DEBUG=electron* node app.js```
-
-## Todo
-
-* Add full browser toolbar to top of window
