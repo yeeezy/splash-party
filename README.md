@@ -34,7 +34,7 @@ Configuration file can be modified as needed:
 * **hmacOnly**: "hmac mode" - a browser passing splash won't pop the window open, it will only print out the cookies, sitekey, and save the source code. Use this if you're only interested in getting hmac cookie and transferring them to your own browser
 * **gCookies**: an array of cookies, See [this repo](https://github.com/yeeezy/captcha-cookies) for explanation on how to build the array. Used properly this will let you through captcha without solving 10 times
 * **gmailUser**: gmail username/email for login to get gCookies
-* **gmailUser**: gmail password for login to get gCookies
+* **gmailPass**: gmail password for login to get gCookies
 * **refresh**: if true, will constantly refresh page after specified waitTime
 * **clearCookiesOnRefresh**: if true, will clear cookies after each refresh
 * **useProxies**: if true, will instantiate a browser for each proxy and local ip; will ignore partySize
