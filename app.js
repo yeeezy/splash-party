@@ -7,6 +7,7 @@ const Nightmare = require('nightmare');
 const request = require('request');
 const util = require('util');
 const webdriver = require('selenium-webdriver');
+const chrome = require('selenium-webdriver/chrome');
 
 let uploadedSource = false;
 let pastSplash = false;
@@ -220,9 +221,14 @@ function killSwitch(nm) {
 
 function soleiusMartyrium(stripes) {
 
-	let driver = new webdriver.Builder()
-	.forBrowser('chrome')
-	.build();
+	let options = new chrome.Options();
+	options.addExtensions('./EditThisCookie.crx');
+
+	let driver = new webdriver
+		.Builder()
+		.forBrowser('chrome')
+		.setChromeOptions(options)
+		.build();
 
 	stripes
 		.cookies.get({ url: null })
@@ -239,6 +245,19 @@ function soleiusMartyrium(stripes) {
 		driver.get('http://www.google.com');
 		for (c in cookies){
 			if (cookies[c].domain.includes('google')){
+				driver.manage().addCookie({
+					'name': cookies[c].name,
+					'value': cookies[c].value,
+					'expiry': cookies[c].expirationDate
+				});
+
+				delete cookies[c];
+			}
+		}
+
+		driver.get('http://www.gmail.com');
+		for (c in cookies){
+			if (cookies[c].domain.includes('gmail')){
 				driver.manage().addCookie({
 					'name': cookies[c].name,
 					'value': cookies[c].value,
