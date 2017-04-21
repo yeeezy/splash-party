@@ -75,6 +75,7 @@ Note: If using ///, cookies from electron will be transferred to a chrome browse
 
 ### ToDo
 - [ ] close tabs after extension added
+- [ ] port /// to express app... lot of effort; SM's source code is a headache
 
 ## Debugging
 * For nightmarejs debugging ```DEBUG=nightmare node app.js```
