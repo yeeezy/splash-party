@@ -122,7 +122,7 @@ if (!config.useProxies || proxies.length == 0){
 	browserArr.push(false);
 }
 
-_.each(browserArr, function(browser, i) {
+_.each(browserArr, (browser, i) => {
 	let opts = {
 		show: false,
 		alwaysOnTop: false,
@@ -224,11 +224,25 @@ function soleiusMartyrium(stripes) {
 	let options = new chrome.Options();
 	options.addExtensions('./EditThisCookie.crx');
 
-	let driver = new webdriver
-		.Builder()
-		.forBrowser('chrome')
-		.setChromeOptions(options)
-		.build();
+	let p = JSON.parse(JSON.stringify(browser)).options.switches['proxy-server'];
+
+	let driver;
+	if (p){
+		driver = new webdriver
+			.withCapabilities(webdriver.Capabilities.chrome())
+			.setProxy(proxy.manual({http: proxy}))
+			.Builder()
+			.forBrowser('chrome')
+			.setChromeOptions(options)
+			.build();
+	} else {
+		driver = new webdriver
+			.withCapabilities(webdriver.Capabilities.chrome())
+			.Builder()
+			.forBrowser('chrome')
+			.setChromeOptions(options)
+			.build();
+	}
 
 	stripes
 		.cookies.get({ url: null })
@@ -243,6 +257,14 @@ function soleiusMartyrium(stripes) {
 	function transferCookies(cookies){
 		// transfer cookies to chrome
 		driver.get('http://www.google.com');
+
+		// driver other tabs
+		driver.getAllWindowHandles().then((handles) => {
+			for (var h = 1, len = handles.length; h < len; h++){
+				driver.switchTo().window(handles[h]);
+				driver.close();
+			}
+		});
 		for (c in cookies){
 			if (cookies[c].domain.includes('google')){
 				driver.manage().addCookie({
