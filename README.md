@@ -2,7 +2,7 @@
 Run multiple headless browsers on Adidas.com waiting room
 
 ### Support
-There is a subreddit for supporting this repo and other Adidas-related repos 
+There is a subreddit for supporting this repo and other Adidas-related repos
 
 https://www.reddit.com/r/adidasatc
 
@@ -31,8 +31,14 @@ Configuration file can be modified as needed:
 * **singleSuccess**: set to true if you want all other browsers to stop once you hit the product page with 1
 * **fuckNikeTalk**: when a browser passes through to the product page, a new window with /// will open with the same session
 * **stripesUrl**: if you set fuckNikeTalk to true, set this to your local /// url
-* **hmacOnly**: "hmac mode" - a browser passing splash won't pop the window open, it will only print out the cookies, sitekey, and save the source code. Use this if you're only interested in getting hmac cookie and transfering them to your own browser
-* **gCookies**: an array of cookies, **do not leave empty, it will cause program to crash**. See [this repo](https://github.com/yeeezy/captcha-cookies) for explanation on how to build the array. Used properly this will let you through captcha without solving 10 times
+* **hmacOnly**: "hmac mode" - a browser passing splash won't pop the window open, it will only print out the cookies, sitekey, and save the source code. Use this if you're only interested in getting hmac cookie and transferring them to your own browser
+* **gCookies**: an array of cookies, See [this repo](https://github.com/yeeezy/captcha-cookies) for explanation on how to build the array. Used properly this will let you through captcha without solving 10 times
+* **gmailUser**: gmail username/email for login to get gCookies
+* **gmailUser**: gmail password for login to get gCookies
+* **refresh**: if true, will constantly refresh page after specified waitTime
+* **clearCookiesOnRefresh**: if true, will clear cookies after each refresh
+* **useProxies**: if true, will instantiate a browser for each proxy and local ip; will ignore partySize
+* **proxies**: array of proxies; can be in `address:port` format or `adress:port:user:pass`; any other format will not work
 
 ### Page Source
 After bypassing the Adidas waiting room/splash page, the app will automatically create a `page-source` directory, where it will save the product page's source code.
@@ -40,7 +46,7 @@ After bypassing the Adidas waiting room/splash page, the app will automatically 
 If you have auto-upload on, your source will be uploaded to https://glot.io/users/yeeezy/snippets
 
 ###Variable Print Out
-When a browser reaches the product page, it will attempt to extract and print the sitekey, client-id and captcha-dup. 
+When a browser reaches the product page, it will attempt to extract and print the sitekey, client-id and captcha-dup.
 
 ### /// Integration
 
@@ -53,10 +59,6 @@ set **fuckNikeTalk** to true and set **stripesUrl** to be your local /// url
 * once a browser gets to the product page, another window will open under the same session cookies+user-agent with your /// page
 * **The title of the browser is the time it opened** - this is important to keep track of your 10 minute cookie
 * if multiple windows open -> multiple /// instances will also open, each under a different session, to make things managable just notice the time in the title to understand how long you have for each window
-
-
-### G-Cookies
-There is now an option to transfer over your g-cookies to pass captcha easily, see config for explanation
 
 ### Disclaimer
 Use at your own risk, currently Adidas does not ban multiple sessions from the same IP, it may in the future.
@@ -73,4 +75,3 @@ Transfer any relevant cookies via your favorite browser extension, I recommend E
 ## Todo
 
 * Add full browser toolbar to top of window
-

@@ -1,19 +1,29 @@
 {
-  "splashUrl": "http://adidas.bot.nu/yeezy",
-  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36",
-  "partySize": 10,
-  "splashUniqueIdentifier": "[data-sitekey]",
-  "waitTime": 3000,
-  "enableSourceUpload": false,
-  "singleSuccess": false,
-  "fuckNikeTalk": false,
-  "stripesUrl": "http://dev.adidas.com:8000/d3stryr-3stripes.php",
-  "hmacOnly": false,
-  "gCookies": [
-    {
-      "url": "https://www.google.com",
-      "name": "abc",
-      "value": "123"
-    }
-  ]
+	"splashUrl": "http://adidas.bot.nu/yeezy",
+	"userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36",
+	"partySize": 1,
+	"splashUniqueIdentifier": "[data-sitekey]",
+	"waitTime": 3000,
+	"enableSourceUpload": false,
+	"singleSuccess": false,
+	"fuckNikeTalk": false,
+	"stripesUrl": "http://dev.adidas.com:8000/d3stryr-3stripes.php",
+	"hmacOnly": false,
+	"gCookies": [{
+		"url": "https://www.google.com",
+		"name": "abc",
+		"value": "123"
+	}],
+	"gmailUser": "",
+	"gmailPass": "",
+	"refresh": true,
+	"clearCookiesOnRefresh": true,
+	"useProxies": false,
+	"proxies": [
+		"address:port",
+		"address:port",
+		"address:port:user:pass",
+		"address:port:user:pass",
+		"address:port:user:pass"
+	]
 }
