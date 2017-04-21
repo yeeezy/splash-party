@@ -73,7 +73,7 @@ Transfer any relevant cookies via your favorite browser extension, I recommend E
 
 Note: If using ///, cookies from electron will be transferred to a chrome browser with the extension EditThisCookie
 
-## ToDo
+### ToDo
 - [ ] close tabs after extension added
 
 ## Debugging
