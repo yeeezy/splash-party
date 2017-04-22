@@ -50,7 +50,6 @@ Nightmare.action('clearCache',
 		parent.respondTo('clearCache', (done) => {
 			win.webContents.session.clearCache(done);
 			done();
-
 		});
 		done();
 	},
