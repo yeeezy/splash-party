@@ -32,19 +32,6 @@ Nightmare.action('show',
 	}
 );
 
-Nightmare.action('hide',
-	function (name, options, parent, win, renderer, done) {
-		parent.respondTo('hide', (done) => {
-			win.hide();
-			done();
-		});
-		done();
-	},
-	function (done) {
-		this.child.call('hide', done);
-	}
-);
-
 Nightmare.action('clearCache',
 	function (name, options, parent, win, renderer, done) {
 		parent.respondTo('clearCache', (done) => {
