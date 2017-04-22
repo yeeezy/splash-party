@@ -6,9 +6,9 @@ const ip = require('ip');
 const Nightmare = require('nightmare');
 const request = require('request');
 const util = require('util');
+const webdriver = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const proxy = require('selenium-webdriver/proxy');
-const webdriver = require('selenium-webdriver');
 
 let uploadedSource = false;
 let pastSplash = false;
@@ -166,11 +166,16 @@ if (config.gmailUser && config.gmailPass){
 		.cookies.get({ url: null })
 		.then((cookieJar) => {
 			// transfer cookies to all browsers
+			// remove browser that already has cookies
+			let gCookieBrowser = browserArr.shift();
 			_.every(browserArr, (browser, b) => {
 				browser.cookies.set(cookieJar).then(() => {
 					party(browser, b);
 				})
 			});
+			
+			browserArr.push(gCookieBrowser);
+			party(gCookieBrowser, browserArr.length);
 		})
 		.catch((err) => {
 			console.log(error(err.toString()));
