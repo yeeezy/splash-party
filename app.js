@@ -6,8 +6,9 @@ const ip = require('ip');
 const Nightmare = require('nightmare');
 const request = require('request');
 const util = require('util');
-const webdriver = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
+const proxy = require('selenium-webdriver/proxy');
+const webdriver = require('selenium-webdriver');
 
 let uploadedSource = false;
 let pastSplash = false;
@@ -23,9 +24,8 @@ Nightmare.action('show',
 		parent.respondTo('show', (done) => {
 			win.show();
 			done();
-		}
-	);
-	done();
+		});
+		done();
 	},
 	function (done) {
 		this.child.call('show', done);
@@ -37,9 +37,8 @@ Nightmare.action('hide',
 		parent.respondTo('hide', (done) => {
 			win.hide();
 			done();
-		}
-	);
-	done();
+		});
+		done();
 	},
 	function (done) {
 		this.child.call('hide', done);
@@ -51,9 +50,9 @@ Nightmare.action('clearCache',
 		parent.respondTo('clearCache', (done) => {
 			win.webContents.session.clearCache(done);
 			done();
-		}
-	);
-	done();
+
+		});
+		done();
 	},
 	function (done) {
 		this.child.call('clearCache', done);
@@ -70,21 +69,6 @@ Nightmare.action('printUserAgent',
 	function (done) {
 		this.child.call('printUserAgent', done);
 });
-
-Nightmare.action('clearCache',
-	function (name, options, parent, win, renderer, done) {
-		parent.respondTo('clearCache', (done) => {
-			win.webContents.session.clearCache(done);
-			done();
-
-		}
-	);
-	done();
-	},
-	function (done) {
-		this.child.call('clearCache', done);
-	}
-);
 
 Nightmare.action('keepTitle',
 	function (name, options, parent, win, renderer, done) {
@@ -126,7 +110,7 @@ _.each(browserArr, (browser, i) => {
 	let opts = {
 		show: false,
 		alwaysOnTop: false,
-		title: ip.address() ,
+		title: ip.address(),
 		webPreferences: {
 			partition: i
 		},
@@ -166,53 +150,36 @@ _.each(browserArr, (browser, i) => {
 	if (config.gCookies.length != 0){
 		browserArr[i].cookies.set(config.gCookies);
 	}
-
-	if (config.gmailUser && config.gmailPass){
-
-		browserArr[i]
-			.wait(1000 * i)
-			.goto('https://accounts.google.com/ServiceLogin')
-			.wait('#Email')
-			.type('#Email', config.gmailUser)
-			.wait('#next')
-			.click('#next')
-			.wait('#Passwd')
-			.type('#Passwd', config.gmailPass)
-			.click('#signIn')
-			.wait(10000)
-			.then(() => {
-				setTimeout(() => {
-					browserArr[i]
-						.goto(config.splashUrl)
-						.then(() => {
-							party(browserArr[i], i);
-						}).catch((err) => {
-							console.log(error(err.toString()));
-						});
-				}, 1000 * i);
-			})
-			.catch((err) => {
-				console.log(error(err.toString()));
-			});
-	} else {
-		setTimeout(() => {
-			browserArr[i]
-				.useragent(config.userAgent)
-				.keepTitle()
-				.cookies.clearAll()
-				.clearCache()
-				.goto(config.splashUrl)
-				.then(() => {
-					party(browserArr[i], i);
-				}).catch((err) => {
-					console.log(error(err.toString()));
-				});
-		}, 1000 * i);
-	}
 });
 
+
+if (config.gmailUser && config.gmailPass){
+	browserArr[0]
+		.goto('https://accounts.google.com/ServiceLogin')
+		.wait('#Email')
+		.type('#Email', config.gmailUser)
+		.wait('#next')
+		.click('#next')
+		.wait('#Passwd')
+		.type('#Passwd', config.gmailPass)
+		.click('#signIn')
+		.wait(5000)
+		.cookies.get({ url: null })
+		.then((cookieJar) => {
+			// transfer cookies to all browsers
+			_.every(browserArr, (browser, b) => {
+				browser.cookies.set(cookieJar).then(() => {
+					party(browser, b);
+				})
+			});
+		})
+		.catch((err) => {
+			console.log(error(err.toString()));
+		});
+}
+
 function killSwitch(nm) {
-	_.each(browserArr, function(browser) {
+	_.each(browserArr, (browser) => {
 		if (browser !== nm) {
 			browser.end().then(()=>{});
 		}
@@ -224,7 +191,7 @@ function soleiusMartyrium(stripes) {
 	let options = new chrome.Options();
 	options.addExtensions('./EditThisCookie.crx');
 
-	let p = JSON.parse(JSON.stringify(browser)).options.switches['proxy-server'];
+	let p = JSON.parse(JSON.stringify(stripes)).options.switches['proxy-server'];
 
 	let driver;
 	if (p){
