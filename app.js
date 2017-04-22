@@ -196,7 +196,7 @@ function soleiusMartyrium(stripes) {
 	if (p){
 		driver = new webdriver
 			.withCapabilities(webdriver.Capabilities.chrome())
-			.setProxy(proxy.manual({http: proxy}))
+			.setProxy(proxy.manual({http: p}))
 			.Builder()
 			.forBrowser('chrome')
 			.setChromeOptions(options)
