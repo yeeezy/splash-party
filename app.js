@@ -1,265 +1,407 @@
-var Nightmare = require('nightmare');
-var _ = require('lodash');
-var request = require('request');
-var config = require('./config');
-var chalk = require('chalk');
-const util = require('util');
+const config = require('./config');
 
-var uploadedSource = false;
+const _ = require('lodash');
+const chalk = require('chalk').bgBlack;
+const ip = require('ip');
+const Nightmare = require('nightmare');
+const request = require('request');
+const util = require('util');
+const webdriver = require('selenium-webdriver');
+const chrome = require('selenium-webdriver/chrome');
+const proxy = require('selenium-webdriver/proxy');
+
+let uploadedSource = false;
+let pastSplash = false;
+
+// logging
+let error = chalk.bold.red;
+let cyan = chalk.cyan;
+let green = chalk.green;
+let yellow = chalk.yellow;
 
 Nightmare.action('show',
-    function (name, options, parent, win, renderer, done) {
-        parent.respondTo('show', function (done) {
-            win.show();
-            done();
-        });
-        done();
-    },
-    function (done) {
-        this.child.call('show', done);
-    });
-
-Nightmare.action('hide',
-    function (name, options, parent, win, renderer, done) {
-        parent.respondTo('hide', function (done) {
-            win.hide();
-            done();
-        });
-        done();
-    },
-    function (done) {
-        this.child.call('hide', done);
-    });
-
+	function (name, options, parent, win, renderer, done) {
+		parent.respondTo('show', (done) => {
+			win.show();
+			done();
+		});
+		done();
+	},
+	function (done) {
+		this.child.call('show', done);
+	}
+);
 
 Nightmare.action('clearCache',
-    function (name, options, parent, win, renderer, done) {
-        parent.respondTo('clearCache', function (done) {
-            win.webContents.session.clearCache(done);
-            done();
-
-        });
-        done();
-    },
-    function (done) {
-        this.child.call('clearCache', done);
-    });
-
+	function (name, options, parent, win, renderer, done) {
+		parent.respondTo('clearCache', (done) => {
+			win.webContents.session.clearCache(done);
+			done();
+		});
+		done();
+	},
+	function (done) {
+		this.child.call('clearCache', done);
+	}
+);
 
 Nightmare.action('printUserAgent',
-    function (name, options, parent, win, renderer, done) {
-        parent.respondTo('printUserAgent', function (done) {
-            done(null, win.webContents.getUserAgent());
-        });
-        done();
-    },
-    function (done) {
-        this.child.call('printUserAgent', done);
-    });
-
-Nightmare.action('keepTitle',
-    function (name, options, parent, win, renderer, done) {
-        parent.respondTo('keepTitle', function (done) {
-            win.on('page-title-updated', function(event){event.preventDefault()});
-            done();
-        });
-        done();
-    },
-    function (done) {
-        this.child.call('keepTitle', done);
-    });
-
-function postPageSource(src) {
-    request.post({
-        url: 'https://snippets.glot.io/snippets',
-        json: true,
-        headers: {
-            'Authorization': 'Token d94a031a-d97a-4276-887e-ed4894875579'
-        },
-        body: {"language": "plaintext", "title": config.splashUrl, "public": true, "files": [{"name": "productpage.html", "content": src}]}
-    })
-}
-
-
-
-var browserArr = new Array(config.partySize);
-
-_.each(browserArr, function(browser, i) {
-    browserArr[i] = Nightmare({
-        show: false,
-        alwaysOnTop: false,
-        webPreferences: {
-            partition: i
-        }
-    }).useragent(config.userAgent)
-        .cookies.clearAll()
-        .clearCache()
-        .cookies.set(config.gCookies);
-
-    setTimeout(function () {
-        browserArr[i]
-            .goto(config.splashUrl)
-            .then(function() {
-                party(browserArr[i], i);
-            }).catch(function (error) {
-                console.error('an error has occurred: ' + error);
-            });
-    }, 1000 * i);
+	function (name, options, parent, win, renderer, done) {
+		parent.respondTo('printUserAgent', (done) => {
+			done(null, win.webContents.getUserAgent());
+		});
+		done();
+	},
+	function (done) {
+		this.child.call('printUserAgent', done);
 });
 
-function killSwitch(nm) {
-    _.each(browserArr, function(browser) {
-       if (browser !== nm) {
-           browser.end();
-       }
-    });
+Nightmare.action('keepTitle',
+	function (name, options, parent, win, renderer, done) {
+		parent.respondTo('keepTitle', (done) => {
+			win.on('page-title-updated', function(event){event.preventDefault()});
+			done();
+		});
+		done();
+	},
+	function (done) {
+		this.child.call('keepTitle', done);
+	}
+);
+
+function postPageSource(src) {
+	request.post({
+		url: 'https://snippets.glot.io/snippets',
+		json: true,
+		headers: {
+			'Authorization': 'Token d94a031a-d97a-4276-887e-ed4894875579'
+		},
+		body: {"language": "plaintext", "title": config.splashUrl, "public": true, "files": [{"name": "productpage.html", "content": src}]}
+	})
 }
 
-function soleiusMartyrium(i) {
-    var stripes = Nightmare({
-        show: true,
-        alwaysOnTop: false,
-        title: Date(),
-        webPreferences: {
-            partition: i
-        }
-    }).useragent(config.userAgent)
-        .keepTitle();
+// configure splash browsers
+let browserArr;
+let proxies = config.proxies;
 
-        stripes.goto(config.stripesUrl)
-        .then(function() {
-           console.log('///');
-        }).catch(function(err) {
-            console.log('error ', err );
-        });
+if (!config.useProxies || proxies.length == 0){
+	browserArr = new Array(config.partySize);
+} else {
+	// as many browsers as proxies + local ip
+	browserArr = proxies;
+	browserArr.push(false);
+}
 
+_.each(browserArr, (browser, i) => {
+	let opts = {
+		show: false,
+		alwaysOnTop: false,
+		title: ip.address(),
+		webPreferences: {
+			partition: i
+		},
+		switches: {
+			'ignore-certificate-errors': true
+		}
+	};
+
+	// add proxy
+	let user, pass;
+	if (config.useProxies){
+		if (proxies[i]){
+			let proxy = proxies[i].split(':');
+			opts.switches['proxy-server'] = `${proxy[0]}:${proxy[1]}`;
+			opts.title = proxies[i];
+
+			// add user:pass
+			if (proxy.length == 4){
+				user = proxy[2];
+				pass = proxy[3];
+			}
+		}
+	}
+
+	browserArr[i] = new Nightmare(opts);
+
+	if (config.useProxies && user && pass ){
+		browserArr[i].authentication(user, pass).then(()=> {});
+	}
+
+	browserArr[i]
+		.useragent(config.userAgent)
+		.keepTitle()
+		.cookies.clearAll()
+		.clearCache()
+
+	if (config.gCookies.length != 0){
+		browserArr[i].cookies.set(config.gCookies).then(() => {});
+	}
+});
+
+
+if (config.gmailUser && config.gmailPass){
+	browserArr[0]
+		.goto('https://accounts.google.com/ServiceLogin')
+		.wait('#Email')
+		.type('#Email', config.gmailUser)
+		.wait('#next')
+		.click('#next')
+		.wait('#Passwd')
+		.type('#Passwd', config.gmailPass)
+		.click('#signIn')
+		.wait(5000)
+		.cookies.get({ url: null })
+		.then((cookieJar) => {
+			// transfer cookies to all browsers
+			// remove browser that already has cookies
+			let gCookieBrowser = browserArr.shift();
+			_.every(browserArr, (browser, b) => {
+				browser.cookies.set(cookieJar).then(() => {
+					party(browser, b);
+				})
+			});
+			
+			browserArr.push(gCookieBrowser);
+			party(gCookieBrowser, browserArr.length);
+		})
+		.catch((err) => {
+			console.log(error(err.toString()));
+		});
+}
+
+function killSwitch(nm) {
+	_.each(browserArr, (browser) => {
+		if (browser !== nm) {
+			browser.end().then(()=>{});
+		}
+	});
+}
+
+function soleiusMartyrium(stripes) {
+
+	let options = new chrome.Options();
+	options.addExtensions('./EditThisCookie.crx');
+
+	let p = JSON.parse(JSON.stringify(stripes)).options.switches['proxy-server'];
+
+	let driver;
+	if (p){
+		driver = new webdriver
+			.withCapabilities(webdriver.Capabilities.chrome())
+			.setProxy(proxy.manual({http: p}))
+			.Builder()
+			.forBrowser('chrome')
+			.setChromeOptions(options)
+			.build();
+	} else {
+		driver = new webdriver
+			.withCapabilities(webdriver.Capabilities.chrome())
+			.Builder()
+			.forBrowser('chrome')
+			.setChromeOptions(options)
+			.build();
+	}
+
+	stripes
+		.cookies.get({ url: null })
+		.end()
+		.then((cookies) => {
+			transferCookies(cookies);
+		})
+		.catch((err) => {
+			console.log(error(err.toString()));
+		});
+
+	function transferCookies(cookies){
+		// transfer cookies to chrome
+		driver.get('http://www.google.com');
+
+		// driver other tabs
+		driver.getAllWindowHandles().then((handles) => {
+			for (var h = 1, len = handles.length; h < len; h++){
+				driver.switchTo().window(handles[h]);
+				driver.close();
+			}
+		});
+		for (c in cookies){
+			if (cookies[c].domain.includes('google')){
+				driver.manage().addCookie({
+					'name': cookies[c].name,
+					'value': cookies[c].value,
+					'expiry': cookies[c].expirationDate
+				});
+
+				delete cookies[c];
+			}
+		}
+
+		driver.get('http://www.gmail.com');
+		for (c in cookies){
+			if (cookies[c].domain.includes('gmail')){
+				driver.manage().addCookie({
+					'name': cookies[c].name,
+					'value': cookies[c].value,
+					'expiry': cookies[c].expirationDate
+				});
+
+				delete cookies[c];
+			}
+		}
+
+		driver.get(config.splashUrl);
+		for (c in cookies){
+			if (cookies[c].domain.includes('adidas')){
+				driver.manage().addCookie({
+					'name': cookies[c].name,
+					'value': cookies[c].value,
+					'expiry': cookies[c].expirationDate
+				});
+
+				delete cookies[c];
+			}
+		}
+
+		driver.get(config.stripesUrl)
+		console.log('///');
+	}
 }
 
 function party(nm, i) {
-    nm.exists(config.splashUniqueIdentifier)
-        .then(function (isSplash) {
-            if (isSplash) {
-                if (config.singleSuccess) {
-                    killSwitch(nm);
-                }
-                return nm.html(`./page-source/${new Date().toString()}.html`, "HTMLComplete")
-                    .then(function() {
-                        return nm.cookies.get()
-                            .then(function (cookies) {
-                                console.log(chalk.bgBlack.yellow('******************************************'));
-                                console.log(chalk.bgBlack.yellow('Passed Splash On Browser ' + (i+1) + ' Extracting Information...'));
-                                console.log(chalk.bgBlack.yellow('Passed Time ' + (i+1) + ' ' + Date()));
-                                console.log(chalk.bgBlack.yellow('******************************************'));
+	nm.exists(config.splashUniqueIdentifier)
+		.then((isSplash) => {
+			if (isSplash){
+				if (config.singleSuccess){
+					killSwitch(nm);
+				}
 
-                                console.log(chalk.bgBlack.cyan('******************************************'));
-                                console.log(chalk.bgBlack.cyan('Complete Cookie Output'));
-                                console.log(chalk.bgBlack.cyan('******************************************'));
-                                console.log(JSON.stringify(cookies));
+				nm.cookies.get()
+					.then((cookies) => {
+						console.log(yellow('******************************************'));
+						console.log(yellow(`Passed Splash On Browser ${i+1} Extracting Information...`));
+						console.log(yellow(`Passed Time ${i+1} ${Date()}`));
+						console.log(yellow('******************************************'));
 
+						console.log(cyan('******************************************'));
+						console.log(cyan('Complete Cookie Output'));
+						console.log(cyan('******************************************'));
+						console.dir(cookies, {depth: null});
 
-                                console.log(chalk.bgBlack.green('******************************************'));
-                                console.log(chalk.bgBlack.green('Suspected HMAC Cookie(s):'));
-                                console.log(chalk.bgBlack.green('******************************************'));
-                                console.log(JSON.stringify(_.filter(cookies, function(cookie) {
-                                    return _.includes(cookie.value, 'hmac');
-                                })));
-                                console.log(chalk.bgBlack.green('******************************************'));
-                            }).then(function () {
-                                return nm.evaluate(function() {
-                                    var action =  document.querySelector('#flashproductform');
-                                    if (action) {
-                                        action = action.getAttribute('action');
-                                        return action.substr(action.indexOf('clientId=')+9,action.length);
-                                    } else {
-                                        return ''
-                                    }
-                                });
-                            }).then(function (clientid) {
-                                console.log(chalk.bgBlack.green('******************************************'));
-                                console.log(chalk.bgBlack.green('Client ID:'));
-                                console.log(chalk.bgBlack.green('******************************************'));
-                                console.log(chalk.bgBlack.yellow('Browser ' + (i+1) + ': ') + clientid);
-                                console.log(chalk.bgBlack.green('******************************************'));
-                            }).then(function () {
-                                return nm.evaluate(function() {
-                                    if (window.captchaResponse) {
-                                        return window.captchaResponse.toString();
-                                    } else {
-                                        return '';
-                                    }
-                                });
-                            }).then(function (dupFunction) {
-                                console.log(chalk.bgBlack.green('******************************************'));
-                                console.log(chalk.bgBlack.green('Captcha-Dup:'));
-                                console.log(chalk.bgBlack.green('******************************************'));
-                                console.log(chalk.bgBlack.yellow('Browser ' + (i + 1) + ': ') + dupFunction.substr(dupFunction.indexOf("$('#flashproductform').append"), dupFunction.length));
-                                console.log(chalk.bgBlack.green('******************************************'));
-                            }).then(function () {
-                                return nm.evaluate(function() {
-                                    var sitekey = document.querySelector('[data-sitekey]');
-                                    if (sitekey) {
-                                        return sitekey.getAttribute('data-sitekey');
-                                    } else {
-                                        return '';
-                                    }
-                                });
-                            }).then(function (sitekey) {
-                                console.log(chalk.bgBlack.green('******************************************'));
-                                console.log(chalk.bgBlack.green('Site Key:'));
-                                console.log(chalk.bgBlack.green('******************************************'));
-                                console.log(chalk.bgBlack.yellow('Browser ' + (i+1) + ': ') + sitekey);
-                                console.log(chalk.bgBlack.green('******************************************'));
-                                console.log(chalk.bgBlack.yellow('******************************************'));
-                                console.log(chalk.bgBlack.yellow('End Of Input For Browser ' + (i+1)));
-                                console.log(chalk.bgBlack.yellow('******************************************') + '\n\n\n\n');
+						console.log(green('******************************************'));
+						console.log(green('Suspected HMAC Cookie(s):'));
+						console.log(green('******************************************'));
+						console.log(JSON.stringify(_.filter(cookies, (cookie) => {
+							_.includes(cookie.value, 'hmac');
+						})));
+					}) // end get cookies
+					nm.then(() => {
+						if (!pastSplash){
+							pastSplash = true;
 
-                            }).then(function () {
-                                if (config.hmacOnly) {
-                                     nm.end();
-                                } else {
-                                    return nm.show();
-                                }
-                            }).then(function() {
-                                if (config.fuckNikeTalk && !config.hmacOnly) {
-                                    soleiusMartyrium(i);
-                                }
+							nm.evaluate(() => { // client ID
+								let action = document.querySelector('#flashproductform');
+								if (action) {
+									action = action.getAttribute('action');
+									return action.substr(action.indexOf('clientId=')+9,action.length);
+								} else {
+									return ''
+								}
+							})
+							.then((clientid) => {
+								console.log(green('******************************************'));
+								console.log(green('Client ID:'));
+								console.log(green('******************************************'));
+								console.log(yellow(`Browser ${i+1}: ${clientid}`));
+								console.log(green('******************************************'));
+							})  // end client id
+							.evaluate(() => {
+								if (window.captchaResponse) {
+									return window.captchaResponse.toString();
+								} else {
+									return '';
+								}
+							})
+							.then((dupFunction) => {
+								if (dupFunction != ''){
+									console.log(green('******************************************'));
+									console.log(green('Captcha-Dup:'));
+									console.log(green('******************************************'));
+									console.log(yellow(`Browser ${i + 1}: `) + dupFunction.substr(dupFunction.indexOf("$('#flashproductform').append"), dupFunction.length));
+									console.log(green('******************************************'));
+								}
+							}) // captcha duplicate
+							.evaluate(() => {
+								let sitekey = document.querySelector('[data-sitekey]');
+								if (sitekey) {
+									return sitekey.getAttribute('data-sitekey');
+								} else {
+									return '';
+								}
+							})
+							.then((sitekey) => {
+								console.log(green('******************************************'));
+								console.log(green('Site Key:'));
+								console.log(green('******************************************'));
+								console.log(yellow(`Browser ${i + 1} ${sitekey}`));
+								console.log(green('******************************************'));
+								console.log(yellow('******************************************'));
+								console.log(yellow(`End Of Input For Browser ${i+1}`));
+								console.log(yellow('******************************************\n\n\n\n'));
+							}) // sitekey
+							.catch((err) => {
+								console.error(error(err.toString()));
+							})
+						} // if past splash
+					}) // end then
+					.then(() => { // SM, etc
+						if (config.hmacOnly){
+							nm.end().then(() => {});
+						} else {
+							nm.show();
+						}
+					})
+					.then(() => {
+						if (!uploadedSource && config.enableSourceUpload) {
+							uploadedSource = true;
 
-                                if (!uploadedSource && config.enableSourceUpload) {
-                                    uploadedSource = true;
-                                    return nm.evaluate(function() {
-                                        return document.querySelector('html').outerHTML;
-                                    }).then(function(html) {
-                                        postPageSource(html);
-                                    }).catch(function (error) {
-                                        console.error('an error has occurred: ' + error);
-                                    });
-                                }
-                            }).catch(function (error) {
-                                console.error('an error has occurred: ' + error);
-                            });
-                    }).catch(function (error) {
-                        console.error('an error has occurred: ' + error);
-                    });
-            } else {
-                return nm
-                    .wait(config.waitTime)
-                    .then(function () {
-                        return nm.cookies.clearAll()
-                    })
-                    .then(function () {
-                        return nm.clearCache()
-                    })
-                    .then(function () {
-                        return nm.refresh();
-                    })
-                    .then(function () {
-                        party(nm, i);
-                    }).catch(function (error) {
-                        console.error('an error has occurred: ' + error);
-                    });
-            }
-        }).catch(function (error) {
-            console.error('an error has occurred: ' + error);
-        });
-}
+							nm.evaluate(() => {
+								return document.querySelector('html').outerHTML;
+							})
+							.then((html) => {
+								postPageSource(html);
+							})
+							.catch((err) => {
+								console.error(error(err.toString()));
+							})
+						}
+					})
+					.then(() => {
+						if (config.fuckNikeTalk) {
+							soleiusMartyrium(nm);
+						}
+					})
+					.catch((err) => {
+						console.error(error(err.toString()));
+					})
+			} else { // if not splash
+				nm.wait(config.waitTime);
 
+				if(config.clearCookiesOnRefresh){
+					nm.cookies.clearAll().clearCache()
+				}
+
+				if (config.refresh){
+					nm.refresh()
+				}
+
+				nm.then(() => {
+						return party(nm, i);
+					})
+					.catch((err) => {
+						console.error(error(err.toString()));
+					})
+			}
+		}) // end then
+		.catch((err) => {
+			console.error(error(err.toString()));
+		});
+} // end party
