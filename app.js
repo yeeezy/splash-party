@@ -134,7 +134,7 @@ _.each(browserArr, (browser, i) => {
 		.clearCache()
 
 	if (config.gCookies.length != 0){
-		browserArr[i].cookies.set(config.gCookies);
+		browserArr[i].cookies.set(config.gCookies).then(() => {});
 	}
 });
 
