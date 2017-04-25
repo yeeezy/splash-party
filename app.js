@@ -189,10 +189,16 @@ function party(nm, i) {
                                     }
                                 });
                             }).then(function (dupFunction) {
+                                matches=dupFunction.match(/name=\"([A-Za-z0-9\-]+)\"/);
                                 console.log(chalk.bgBlack.green('******************************************'));
                                 console.log(chalk.bgBlack.green('Captcha-Dup:'));
                                 console.log(chalk.bgBlack.green('******************************************'));
-                                console.log(chalk.bgBlack.yellow('Browser ' + (i + 1) + ': ') + dupFunction.substr(dupFunction.indexOf("$('#flashproductform').append"), dupFunction.length));
+                                if(matches) {
+                                  console.log(chalk.bgBlack.yellow('Browser ' + (i + 1) + ': ') + matches[1]);
+                                }
+                                else {
+                                  console.log(chalk.bgBlack.yellow('Browser ' + (i + 1) + ': ') + dupFunction.substr(dupFunction.indexOf("$('#flashproductform').append"), dupFunction.length));
+                                }
                                 console.log(chalk.bgBlack.green('******************************************'));
                             }).then(function () {
                                 return nm.evaluate(function() {
