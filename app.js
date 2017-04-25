@@ -125,8 +125,9 @@ function soleiusMartyrium(i) {
         }
     }).useragent(config.userAgent)
         .keepTitle();
-
+        stripes.goto('https://www.google.com')
         stripes.goto(config.stripesUrl)
+        .refresh()
         .then(function() {
            console.log('///');
         }).catch(function(err) {
