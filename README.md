@@ -1,8 +1,13 @@
 # splash-party
 Run multiple headless browsers on Adidas.com waiting room
 
+## Important Breaking Changes - Made April 26th, 2017 - Must Read
+
+* **gCookies**: You **should not** convert cookies in the jsfiddle any more, copy them straight from EditThisCookie
+* ***///***: If you have enabled /// via splash-party, all cookies are now being copied in a more trustworthy way, and all variables found will be automatically filled in /// when it opens
+
 ### Support
-There is a subreddit for supporting this repo and other Adidas-related repos 
+There is a subreddit for supporting this repo and other Adidas-related repos
 
 https://www.reddit.com/r/adidasatc
 
@@ -33,14 +38,15 @@ Configuration file can be modified as needed:
 * **stripesUrl**: if you set fuckNikeTalk to true, set this to your local /// url
 * **hmacOnly**: "hmac mode" - a browser passing splash won't pop the window open, it will only print out the cookies, sitekey, and save the source code. Use this if you're only interested in getting hmac cookie and transfering them to your own browser
 * **gCookies**: an array of cookies, **do not leave empty, it will cause program to crash**. See [this repo](https://github.com/yeeezy/captcha-cookies) for explanation on how to build the array. Used properly this will let you through captcha without solving 10 times
+* **SKU**: only relevant for /// users, the current product SKU
+* **locale**: only relevant for /// users, your adidas locale
 
 ### Page Source
 After bypassing the Adidas waiting room/splash page, the app will automatically create a `page-source` directory, where it will save the product page's source code.
 
-If you have auto-upload on, your source will be uploaded to https://glot.io/users/yeeezy/snippets
 
-###Variable Print Out
-When a browser reaches the product page, it will attempt to extract and print the sitekey, client-id and captcha-dup. 
+### Variable Print Out
+When a browser reaches the product page, it will attempt to extract and print the sitekey, client-id and captcha-dup.
 
 ### /// Integration
 
@@ -54,6 +60,7 @@ set **fuckNikeTalk** to true and set **stripesUrl** to be your local /// url
 * **The title of the browser is the time it opened** - this is important to keep track of your 10 minute cookie
 * if multiple windows open -> multiple /// instances will also open, each under a different session, to make things managable just notice the time in the title to understand how long you have for each window
 
+* all variables found will auto-populate the script when it opens
 
 ### G-Cookies
 There is now an option to transfer over your g-cookies to pass captcha easily, see config for explanation

@@ -11,9 +11,11 @@
   "hmacOnly": false,
   "gCookies": [
     {
-      "url": "https://www.google.com",
-      "name": "abc",
-      "value": "123"
+      "domain": ".google.com",
+      "name": "def",
+      "value": "456"
     }
-  ]
+  ],
+  "SKU": "CP9366",
+  "locale": "US"
 }
