@@ -35,6 +35,7 @@ Configuration file can be modified as needed:
 * **enableSourceUpload**: enables the auto-upload of page source once you hit the product page, to be shared by the community
 * **singleSuccess**: set to true if you want all other browsers to stop once you hit the product page with 1
 * **fuckNikeTalk**: when a browser passes through to the product page, a new window with /// will open with the same session
+* **fuckGmail**: if **fuckNikeTalk** is true, the browser will first open gmail, after logging in succesfully it will browse to ///, making captcha solving easier for /// users
 * **stripesUrl**: if you set fuckNikeTalk to true, set this to your local /// url
 * **hmacOnly**: "hmac mode" - a browser passing splash won't pop the window open, it will only print out the cookies, sitekey, and save the source code. Use this if you're only interested in getting hmac cookie and transfering them to your own browser
 * **gCookies**: an array of cookies, **do not leave empty, it will cause program to crash**. See [this repo](https://github.com/yeeezy/captcha-cookies) for explanation on how to build the array. Used properly this will let you through captcha without solving 10 times
@@ -52,15 +53,15 @@ When a browser reaches the product page, it will attempt to extract and print th
 
 **this feature has never been tested live**
 
-If you want to use [d3stryr-3stripes](https://github.com/thenikedestroyer/d3stryr-3stripes), you can now do so from inside the program.
+If you want to use [d3stryr-3stripes PHP script](https://github.com/thenikedestroyer/d3stryr-3stripes-php), you can now do so from inside the program.
 
-set **fuckNikeTalk** to true and set **stripesUrl** to be your local /// url
+set **fuckNikeTalk** to true and set **stripesUrl** to be your local /// url, for easier captcha solving set **fuckGmail** to true
 
 * once a browser gets to the product page, another window will open under the same session cookies+user-agent with your /// page
 * **The title of the browser is the time it opened** - this is important to keep track of your 10 minute cookie
 * if multiple windows open -> multiple /// instances will also open, each under a different session, to make things managable just notice the time in the title to understand how long you have for each window
-
 * all variables found will auto-populate the script when it opens
+* with fuckGmail set to true, you will log in to gmail before the browser moves to ///
 
 ### G-Cookies
 There is now an option to transfer over your g-cookies to pass captcha easily, see config for explanation

@@ -7,6 +7,7 @@
   "enableSourceUpload": false,
   "singleSuccess": false,
   "fuckNikeTalk": false,
+  "fuckGmail": true,
   "stripesUrl": "http://dev.adidas.com:8000/d3stryr-3stripes.php",
   "hmacOnly": false,
   "gCookies": [

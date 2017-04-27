@@ -3,7 +3,8 @@ var _ = require('lodash');
 var request = require('request');
 var config = require('./config');
 var chalk = require('chalk');
-const util = require('util');
+var wait = require('nightmare-wait-for-url');
+var util = require('util');
 
 var uploadedSource = false;
 
@@ -147,6 +148,8 @@ _.each(browserArr, function (browser, i) {
                 party(browserArr[i], i);
             }).catch(function (error) {
             console.error('an error has occurred: ' + error);
+            console.error(util.inspect(error));
+            browserArr[i].end();
         });
     }, 1000 * i);
 });
@@ -171,13 +174,27 @@ function soleiusMartyrium(i) {
         .keepTitle()
         .cookies.set(cookieArr[i]);
 
-    stripes.goto(config.stripesUrl)
-        .then(function () {
-            console.log('///');
-        }).catch(function (err) {
-        console.log('error ', err);
-    });
-
+    if (config.fuckGmail) {
+        stripes
+            .goto('https://www.gmail.com')
+            .waitForUrl('.*(mail.google.com\/mail).*')
+            .goto(config.stripesUrl)
+            .then(function () {
+                console.log('///');
+            }).catch(function (err) {
+            console.log('error ', err);
+            console.error(util.inspect(error));
+        });
+    } else {
+        stripes
+            .goto(config.stripesUrl)
+            .then(function () {
+                console.log('///');
+            }).catch(function (err) {
+            console.log('error ', err);
+            console.error(util.inspect(error));
+        });
+    }
 }
 
 function party(nm, i) {
@@ -320,13 +337,19 @@ function party(nm, i) {
                                         postPageSource(html);
                                     }).catch(function (error) {
                                         console.error('an error has occurred: ' + error);
+                                        console.error(util.inspect(error));
+                                        nm.end();
                                     });
                                 }
                             }).catch(function (error) {
                                 console.error('an error has occurred: ' + error);
+                                console.error(util.inspect(error));
+                                nm.end();
                             });
                     }).catch(function (error) {
                         console.error('an error has occurred: ' + error);
+                        console.error(util.inspect(error));
+                        nm.end();
                     });
             } else {
                 return nm
@@ -344,10 +367,13 @@ function party(nm, i) {
                         party(nm, i);
                     }).catch(function (error) {
                         console.error('an error has occurred: ' + error);
+                        console.error(util.inspect(error));
+                        nm.end();
                     });
             }
         }).catch(function (error) {
         console.error('an error has occurred: ' + error);
+        nm.end();
     });
 }
 
