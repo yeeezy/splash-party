@@ -4,7 +4,7 @@ Run multiple headless browsers on Adidas.com waiting room
 ## Important Breaking Changes - Made April 26th, 2017 - Must Read
 
 * **gCookies**: You **should not** convert cookies in the jsfiddle any more, copy them straight from EditThisCookie
-* ***///***: If you have enabled /// via splash-party, all cookies are now being copied in a more trustworthy way, and all variables found will be automatically filled in /// when it opens
+* **\/\/\/**: If you have enabled /// via splash-party, all cookies are now being copied in a more trustworthy way, and all variables found will be automatically filled in /// when it opens
 
 ### Support
 There is a subreddit for supporting this repo and other Adidas-related repos
