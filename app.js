@@ -167,6 +167,7 @@ function soleiusMartyrium(i) {
         show: true,
         alwaysOnTop: false,
         title: Date(),
+        waitTimeout: 120000,
         webPreferences: {
             partition: i
         }
@@ -177,7 +178,7 @@ function soleiusMartyrium(i) {
     if (config.fuckGmail) {
         stripes
             .goto('https://www.gmail.com')
-            .waitForUrl('.*(mail.google.com\/mail).*')
+            .waitForUrl('(https://mail.google.com\/mail).*')
             .goto(config.stripesUrl)
             .then(function () {
                 console.log('///');
