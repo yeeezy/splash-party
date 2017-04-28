@@ -178,7 +178,7 @@ function soleiusMartyrium(i) {
     if (config.fuckGmail) {
         stripes
             .goto('https://www.gmail.com')
-            .waitForUrl('(https://mail.google.com\/mail).*')
+            .waitForUrl('(https://mail.google.com\/mail/).*(inbox)')
             .goto(config.stripesUrl)
             .then(function () {
                 console.log('///');
