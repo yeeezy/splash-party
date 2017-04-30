@@ -10,7 +10,7 @@
     "nightmare-wait-for-url": "0.0.2",
     "request": "^2.79.0"
   },
-  "devDependencies": {},
+  "devDependencies": { "extract-zip": "=1.6.0" },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
