@@ -199,7 +199,9 @@ function soleiusMartyrium(i) {
 }
 
 function party(nm, i) {
-    nm.exists(config.splashUniqueIdentifier)
+    nm.evaluate(function() {
+        return typeof CAPTCHA_KEY !== 'undefined';
+    })
         .then(function (isSplash) {
             if (isSplash) {
                 if (config.singleSuccess) {
