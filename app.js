@@ -280,9 +280,9 @@ function party(nm, i) {
                                 })
                             }).then(function () {
                                 return nm.evaluate(function () {
-                                    var sitekey = document.querySelector('[data-sitekey]');
+                                    var sitekey = window.CAPTCHA_KEY;
                                     if (sitekey) {
-                                        return sitekey.getAttribute('data-sitekey');
+                                        return sitekey;
                                     } else {
                                         return '';
                                     }
